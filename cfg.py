@@ -6,6 +6,7 @@ initializes various bits and sets up needed variables
 :var mariadb.Connection conn: The connection to the database. Note that, unless necessary, this should NOT be used
     to create a cursor. Instead, use the already created cursor 'cur'.
 :var mariadb.Cursor cur: The cursor that is used to execute sql statements on the database.
+    remember to commit with conn after executing statements.
 """
 
 from pathlib import Path
@@ -85,9 +86,9 @@ _found_tables = [i[0] for i in cur]
 _missing_tables = [i for i in _required_tables if i not in _found_tables]
 if _missing_tables:
     if _cfg_data['create_db']:  # Create db from sql file if create_db is true
-        with open(Path('cfg', 'create-db.sql'), 'r') as _file:
-            # cur.execute() only supports one sql statement at a time, so we need to split the file into an array.
-            # We use strip() to get rid of tailing newlines that cause entries to appear in the list consisting of
+        with open(Path('create-db.sql'), 'r') as _file:
+            # cur.execute() only supports one sql statement at a time, so we need to split the file into an array. We
+            # use strip() to get rid of tailing newlines that cause entries to appear in the list consisting of
             # only a newline.
             for i in _file.read().strip().split(';'):
                 if not i: continue  # skip any empty entries in the list
